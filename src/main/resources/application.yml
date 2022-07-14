@@ -1,0 +1,39 @@
+spring:
+  #-------------------------------Specifica per la sicurezza e keycloack----------------------------------------------
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/Aesthetic
+          jwk-set-uri: http://localhost:8080/realms/Aesthetic/protocol/openid-connect/certs
+    #-------------------------------Specifiche per il db----------------
+  datasource:
+    username: postgres
+    password: progetto
+    url: jdbc:postgresql://localhost:5432/sito
+
+  sql:
+    init:
+      platform: postgres
+
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_cpntextual_creation: true
+
+
+#-----------------------------Specifiche per un eventuale certificato https-----------------------------------
+server:
+  port : 8081
+    #ssl:
+    #key-store-password: password_certificate
+    #key-store-type: PKCS12 tipo di password
+  #key-store: path per prelevare il certificato
