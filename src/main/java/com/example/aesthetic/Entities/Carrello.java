@@ -20,5 +20,15 @@ public class Carrello {
     @Column(name = "quantita", nullable = true)
     private int quantita;
 
+    @ManyToOne
+    @JoinColumn(name = "ordine_associato")
+    @JsonIgnore
+    @ToString.Exclude
+    private Ordine ordine;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "opera")
+    private Opera opera;
+
 
 }

@@ -1,10 +1,13 @@
 package com.example.aesthetic.Entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
 
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -40,5 +43,17 @@ public class Opera {
     @Basic
     @Column(name = "tipologia", length = 20)
     private String tipologia;
+
+    @Version
+    @Column(name = "versione", nullable = false)
+    @JsonIgnore
+    private long versione;
+
+    @OneToMany(targetEntity = Carrello.class, mappedBy = "opera", cascade = CascadeType.MERGE)
+    @JsonIgnore
+    @ToString.Exclude
+    private List<Carrello> carrello;
+
+
 
 }

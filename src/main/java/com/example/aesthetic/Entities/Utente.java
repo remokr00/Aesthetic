@@ -2,8 +2,10 @@ package com.example.aesthetic.Entities;
 
 //Implementata da Irtuso Remo
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -38,5 +40,11 @@ public class Utente {
     @Basic
     @Column(name = "e_mail", length = 50)
     private String mail;
+
+
+    @OneToMany(mappedBy = "acquirente", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @JsonIgnore
+    private List<Ordine> ordini;
+
 
 }

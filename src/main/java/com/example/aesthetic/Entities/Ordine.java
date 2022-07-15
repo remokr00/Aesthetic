@@ -38,14 +38,11 @@ public class Ordine {
     @Column(name = "CVV", nullable = false, length = 3, unique = true)
     private String cvv;
 
-    //definisco le relazioni
     @ManyToOne
-    @JoinColumn(name = "id_utente", nullable = false)
+    @JoinColumn(name = "acquirente")
     private Utente acquirente;
 
-    @ManyToMany
-    @JoinTable(name = "carrello", joinColumns = @JoinColumn(name = "codice_prodotto"), inverseJoinColumns = @JoinColumn(name = "codice_opera"))
-    private List<Opera> prodotti;
-
+    @OneToMany(mappedBy = "ordine", cascade = CascadeType.MERGE)
+    private List<Carrello> carrello;
 
 }
