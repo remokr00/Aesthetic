@@ -20,6 +20,15 @@ public class Carrello {
     @Column(name = "quantita", nullable = true)
     private int quantita;
 
+    @Basic
+    @Column(name = "prezzo", nullable = true)
+    private float prezzo;
+
+    @Version
+    @Column(name= "versione", nullable = false)
+    @JsonIgnore
+    private long version;
+
     @ManyToOne
     @JoinColumn(name = "ordine_associato")
     @JsonIgnore

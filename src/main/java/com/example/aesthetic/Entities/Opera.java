@@ -18,7 +18,7 @@ public class Opera {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "codice", nullable = false)
-    private int codice;
+    private Integer codice;
 
     @Basic
     @Column(name = "nome", nullable = false, length = 50)
@@ -43,6 +43,12 @@ public class Opera {
     @Basic
     @Column(name = "tipologia", length = 20)
     private String tipologia;
+
+    //immagine per il prodotto, salvo l'url
+    @Basic
+    @Column(name = "immagine", nullable = true, length = 500)
+    @ToString.Exclude
+    private String immagine;
 
     @Version
     @Column(name = "versione", nullable = false)
