@@ -17,6 +17,8 @@ public interface OrdineRepository extends JpaRepository<Ordine, Integer> {
     //troviamo gli acquisti dell'utente x
     List<Ordine> findByAcquirente(Utente acquirente);
 
+    boolean existsByAcquirente(Utente acquirente);
+
     //troviamo gli ordini effettuati in data x
     List<Ordine> findByData(Date data);
 
@@ -26,22 +28,8 @@ public interface OrdineRepository extends JpaRepository<Ordine, Integer> {
             "WHERE o.data > :inizio AND o.data < :fine AND o.acquirente = :utente")
     List<Ordine> findByBuyerInPeriod(Date inizio, Date fine, Utente acquirente);
 
-    //troviamo gli ordini di una particolare opera (supponendo esistano solo pezzi unici)
-    Ordine findByOpera(Opera opera);
 
-    //troviamo gli ordini con un determinato codice
-    Ordine findByCodice(Integer codice);
+    boolean existsByCodice(Integer codice);
 
-    //verifico se l'ordine che ha il seguente codice esiste
-    boolean existsByCodice(int codice);
-
-    //elimino gli ordini associati al codice
-    void deleteByCodice(int codice);
-
-    //elimino gli ordini associati a un utente
-    @Query("SELECT o "+
-            "FROM Ordine o "+
-            "WHERE o.acquirente.codiceFiscale = :cf ")
-    void deleteByCFAcquirente(String cf);
-
+    void deleteByCodice(Integer codice);
 }

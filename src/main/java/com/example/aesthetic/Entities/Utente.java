@@ -42,7 +42,7 @@ public class Utente {
     private String mail;
 
 
-    @OneToMany(mappedBy = "acquirente", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "utente", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private List<OperaNelCarrello> carrello;
 

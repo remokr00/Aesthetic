@@ -25,10 +25,8 @@ import java.util.List;
 
 @Service
 public class OperaService {
-
     @Autowired
     private OperaRepository operaRepository;
-
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -36,6 +34,10 @@ public class OperaService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public List<Opera> mostraTutteLeOpere() { return operaRepository.findAll(); }
 
+    @Transactional(readOnly = true,propagation = Propagation.SUPPORTS)
+    public List<Opera> mostraOpereByNameContaining(String name) {
+        return operaRepository.findByNomeContaining(name);
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
     public Opera aggiungiOpera(Opera opera) throws OperaEsistenteExcepiton, ArtistaInesistenteException {

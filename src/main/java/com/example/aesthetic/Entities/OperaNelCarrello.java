@@ -48,8 +48,6 @@ public class OperaNelCarrello {
 
 
 
-
-
     public OperaNelCarrello() {
 
     }

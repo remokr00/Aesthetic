@@ -4,9 +4,11 @@ package com.example.aesthetic.Repositories;
 import com.example.aesthetic.Entities.Opera;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface OperaRepository extends JpaRepository<Opera, Integer> {
 
     //Ricerca avanzata per l'opera
@@ -22,9 +24,6 @@ public interface OperaRepository extends JpaRepository<Opera, Integer> {
     )
     List<Opera> advancedResearch(Integer codice, String nome, String tipologia, Float prezzo1, Float prezzo2);
 
-
-    //verifico se esiste l'opera
-    boolean existsByCodiceOrNome(Integer codice, String nome);
 
     //verifica se l'opera esite a seconda del codice che passiamo
     boolean existsByCodice(Integer integer);

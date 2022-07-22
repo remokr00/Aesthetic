@@ -27,8 +27,8 @@ public interface UtenteRepository extends JpaRepository<Utente, Integer> {
     //vediamo se esiste l'utente con quel cf per evitare duplicati
     boolean existsByCodiceFiscale(String codiceFiscale);
 
-    //vediamo se esiste un utente con quest amial
-    List<Utente> findByMailContaining(String mail);
+    //vediamo se esiste un utente con questa mail
+    Utente findByMailContaining(String mail);
 
 
 

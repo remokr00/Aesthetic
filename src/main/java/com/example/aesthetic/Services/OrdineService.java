@@ -1,6 +1,7 @@
 package com.example.aesthetic.Services;
 
 import com.example.aesthetic.Entities.Opera;
+import com.example.aesthetic.Entities.OperaNelCarrello;
 import com.example.aesthetic.Entities.Ordine;
 import com.example.aesthetic.Entities.Utente;
 import com.example.aesthetic.Repositories.OperaRepository;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
@@ -31,22 +33,36 @@ public class OrdineService {
     @PersistenceContext
     private EntityManager entityManager;
 
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
-    public Ordine creaOrdine(Ordine ordine) throws OrdineEsistenteException, OpereInesistenteException, UtenteInesistenteExcepiton {
-        if(!utenteRepository.existsByCodiceFiscale(ordine.getAcquirente().getCodiceFiscale())){
-            throw new UtenteInesistenteExcepiton();
-        }
-        List<Opera> carrello = ordine.getCarrello();
-        return ordineRepository.save(ordine);
+    public Ordine creaOrdine(String email) throws OrdineEsistenteException, OpereInesistenteException, UtenteInesistenteException, CarrelloVuotoException, ProdottoEsauritoException {
+       Utente utente = utenteRepository.findByMailContaining(email);
+       List<OperaNelCarrello> carrello = utente.getCarrello();
+       if(carrello==null || carrello.size()==0) throw new CarrelloVuotoException();
+       Ordine ordine = ordineRepository.save(new Ordine(carrello, utente));
+       for(OperaNelCarrello o: carrello){
+           o.setOrdine(ordine);
+           entityManager.merge(ordine);
+           Opera opera = o.getOpera();
+           entityManager.lock(opera, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+           int quant = opera.getQuantita() - o.getQuantita();
+           if(quant<0){
+               throw new ProdottoEsauritoException();
+           }
+           opera.setQuantita(quant);
+           entityManager.merge(opera);
+       }
+       return ordine;
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
-    public List<Ordine> getOrdine(Utente utente) throws UtenteInesistenteExcepiton {
-        if(!utenteRepository.existsByMail(utente.getMail())){
-            throw new UtenteInesistenteExcepiton();
+    @Transactional(readOnly = true,propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
+    public List<Ordine> getAcquistoByUtente(String email) throws UtenteInesistenteException {
+        if ( !utenteRepository.existsByMail(email) ) {
+            throw new UtenteInesistenteException();
         }
-        return ordineRepository.findByAcquirente(utente);
+        return ordineRepository.findByAcquirente(utenteRepository.findByMailContaining(email));
     }
+
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
     public void eliminaOrdine(Integer codice) throws OrdineInesistenteException {
@@ -75,23 +91,6 @@ public class OrdineService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
-    public Ordine ricercaPerOpera(Opera opera){
-        return ordineRepository.findByOpera(opera);
-    }
-
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
-    public Ordine ricercaPerCodice(Integer codice){
-        return ordineRepository.findByCodice(codice);
-    }
-
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public List<Ordine> findAll(){return ordineRepository.findAll();}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
-    public void eliminaOrdineDi(String codFiscale) throws UtenteInesistenteExcepiton {
-        if(!utenteRepository.existsByCodiceFiscale(codFiscale)){
-            throw new UtenteInesistenteExcepiton();
-        }
-        ordineRepository.deleteByCFAcquirente(codFiscale);
-    }
 }
