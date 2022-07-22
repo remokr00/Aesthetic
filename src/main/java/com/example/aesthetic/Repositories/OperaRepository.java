@@ -41,6 +41,8 @@ public interface OperaRepository extends JpaRepository<Opera, Integer> {
     //troviamo le opere legate ad un determinato artista
     List<Opera> findByArtista(String artista);
 
+    Opera findByCodice(Integer codice);
+
 
 
 

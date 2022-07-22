@@ -26,23 +26,18 @@ public class Ordine {
     @CreationTimestamp
     private Date data;
 
-    @Basic
-    @Column(name = "numero_carta", nullable = false, length = 20, unique = true)
-    private String carta;
-
-    @Basic
-    @Column(name = "scadenza", nullable = false, length = 5)
-    private String scadenza;
-
-    @Basic
-    @Column(name = "CVV", nullable = false, length = 3, unique = true)
-    private String cvv;
-
     @ManyToOne
     @JoinColumn(name = "acquirente")
     private Utente acquirente;
 
     @OneToMany(mappedBy = "ordine", cascade = CascadeType.MERGE)
-    private List<Carrello> carrello;
+    private List<OperaNelCarrello> carrello;
 
+    public Ordine(List<OperaNelCarrello> opereNelCarrello, Utente acquirente) {
+        this.carrello = opereNelCarrello;
+        this.acquirente = acquirente;
+    }
+
+    public Ordine() {
+    }
 }

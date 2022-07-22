@@ -44,7 +44,7 @@ public class Utente {
 
     @OneToMany(mappedBy = "acquirente", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
-    private List<Ordine> ordini;
+    private List<OperaNelCarrello> carrello;
 
 
 }

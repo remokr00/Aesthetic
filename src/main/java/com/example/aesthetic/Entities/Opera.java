@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "opera", schema = "Aesthetic")
-public class Opera {
+public class Opera{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,10 +55,10 @@ public class Opera {
     @JsonIgnore
     private long versione;
 
-    @OneToMany(targetEntity = Carrello.class, mappedBy = "opera", cascade = CascadeType.MERGE)
+    @OneToMany(targetEntity = OperaNelCarrello.class, mappedBy = "opera", cascade = CascadeType.MERGE)
     @JsonIgnore
     @ToString.Exclude
-    private List<Carrello> carrello;
+    private List<OperaNelCarrello> opereNelcarrello;
 
 
 

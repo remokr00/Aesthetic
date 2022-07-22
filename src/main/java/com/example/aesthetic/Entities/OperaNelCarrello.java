@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "carrello", schema = "Aesthetic")
-public class Carrello {
+public class OperaNelCarrello {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,6 @@ public class Carrello {
     @Column(name = "prezzo", nullable = true)
     private float prezzo;
 
-    @Version
-    @Column(name= "versione", nullable = false)
-    @JsonIgnore
-    private long version;
-
     @ManyToOne
     @JoinColumn(name = "ordine_associato")
     @JsonIgnore
@@ -39,5 +34,23 @@ public class Carrello {
     @JoinColumn(name = "opera")
     private Opera opera;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "utente")
+    @JsonIgnore
+    @ToString.Exclude
+    private Utente utente;
 
+    public OperaNelCarrello(Opera opera,int quantita,Utente utente){
+        this.opera = opera;
+        this.quantita = quantita;
+        this.utente=utente;
+    }
+
+
+
+
+
+    public OperaNelCarrello() {
+
+    }
 }

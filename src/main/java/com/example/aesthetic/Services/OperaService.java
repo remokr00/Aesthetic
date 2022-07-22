@@ -11,10 +11,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,35 +33,39 @@ public class OperaService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public List<Opera> mostraTutteLeOpere() { return operaRepository.findAll(); }
 
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
     public Opera aggiungiOpera(Opera opera) throws OperaEsistenteExcepiton, ArtistaInesistenteException {
         if( opera.getCodice() != null || operaRepository.existsByCodice(opera.getCodice() )){
             throw new OperaEsistenteExcepiton();
        }
+        entityManager.lock(opera, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         return operaRepository.save(opera);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
     public Opera aggiornaOpera(Opera opera) throws OpereInesistenteException {
         if(!operaRepository.existsByCodice(opera.getCodice())){
-            operaRepository.save(opera);
+            throw new OpereInesistenteException();
         }
+        entityManager.lock(opera, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         return operaRepository.save(opera);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
     public void rimuoviOpera(Integer codice) throws OpereInesistenteException {
         if(!operaRepository.existsByCodice(codice)){
             throw new OpereInesistenteException();
         }
+        Opera opera = operaRepository.findByCodice(codice);
+        entityManager.lock(opera, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         operaRepository.deleteByCodice(codice);
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public List<Opera> paginazione(int numeroPagine, int grandezzaPagina, String ordinaPer){
         Pageable pageable = PageRequest.of(numeroPagine, grandezzaPagina, Sort.by(ordinaPer));
         Page<Opera> risultato = operaRepository.findAll(pageable);
@@ -71,20 +77,20 @@ public class OperaService {
         }
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public List<Opera> ricercaAvanzata(Integer codice, String nome, String tipologia, Float prezzo1, Float prezzo2){
         List<Opera> risultato = operaRepository.advancedResearch(codice, nome, tipologia, prezzo1, prezzo2);
         return risultato;
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public List<Opera> ricercaPerNome(String nome){
         List<Opera> risultato = operaRepository.findByNomeContaining(nome);
         return risultato;
     }
 
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED)
     public List<Opera> createDa(String artista) throws ArtistaInesistenteException{
         List<Opera> opere = operaRepository.findByArtista(artista);
         if(opere==null){
