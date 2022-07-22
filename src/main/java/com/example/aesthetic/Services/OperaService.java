@@ -40,7 +40,7 @@ public class OperaService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
-    public Opera aggiungiOpera(Opera opera) throws OperaEsistenteExcepiton, ArtistaInesistenteException {
+    public Opera aggiungiOpera(Opera opera) throws OperaEsistenteExcepiton{
         if( opera.getCodice() != null || operaRepository.existsByCodice(opera.getCodice() )){
             throw new OperaEsistenteExcepiton();
        }
